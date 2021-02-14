@@ -1,6 +1,18 @@
-version: "3.9"
+version: "3.0"
 services:
   local:
     build: .
+    environment:
+      - EMAIL
+      - USER
+      - PASSWORD
+      - MEET_URL
+      - VIDEO_NAME=${VIDEO_NAME:-video}
+      - MAX_DURATION=${MAX_DURATION:-7200}
+      - MIN_DURATION=${MIN_DURATION:-1800}
+      - FRAC_TO_EXIT=${FRAC_TO_EXIT:-0.90}
+      - FPS=${FPS:-25}
+      - RESOLUTION=${RESOLUTION:-1920x1080}
     volumes:
-      - ./output:/output
+      - ${OUTPUT_DIR:-./}:/output
+    command: sh ./sources/driver.sh

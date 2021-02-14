@@ -1,28 +1,46 @@
 from xvfbwrapper import Xvfb
-from upc_meet_manager import UPCMeetManager
+from upc_backend import UPCBackend
 import threading
 import subprocess
 from queue import Queue
+import os
 
 
-def start_bot(q):
-    with Xvfb(width=1920, height=1080, colordepth=24) as xvfb:
+
+def start_bot(q, meet_url, email, user, passwd, w, h, min_time, max_time, frac_to_exit):
+    with Xvfb(width=w, height=h, colordepth=24) as xvfb:
         q.put(xvfb.new_display)
-        meet_url = "https://meet.google.com/pmj-gjaz-ksn"
-        user = "alexandre.perez.josende"
-        mail_domain = "estudiantat.upc.edu"
-        passwd = "Alex224683"
-        m = UPCMeetManager(user + "@" + mail_domain, user,
-                           passwd, resolution=(1920, 1080))
-        m.meet_while(meet_url, 40, 40, 0.3)
+        m = UPCBackend(email, user, passwd, resolution=(w, h))
+        m.meet_while(meet_url, min_time, max_time, frac_to_exit)
 
 
-q = Queue()
-bot_thread = threading.Thread(target=start_bot, args=(q,))
-bot_thread.start()
-display = q.get(block=True, timeout=10)
-ffmpeg_p = subprocess.Popen(["ffmpeg", "-y", "-f", "x11grab", "-r", "15", "-video_size",
-                             "1920x1080", "-draw_mouse", "0", "-i", f":{display}",
-                             "-f", "pulse", "-ac", "2", "-i", "default", "/output/video.webm"])
-bot_thread.join()
-ffmpeg_p.kill()
+def main():
+    email = os.getenv("EMAIL")
+    user = os.getenv("USER")
+    passwd = os.getenv("PASSWORD")
+    meet_url = os.getenv("MEET_URL")
+    if not (email and user and passwd and meet_url):
+        print("EMAIL, USER, PASSWORD and MEET_URL are required.")
+        return
+    filename = os.getenv("VIDEO_NAME")
+    max_duration = int(os.getenv("MAX_DURATION"))
+    min_duration = int(os.getenv("MIN_DURATION"))
+    frac_to_exit = float(os.getenv("FRAC_TO_EXIT"))
+    fps = os.getenv("FPS")
+    width, height = os.getenv("RESOLUTION").split("x")
+    width, height = int(width), int(height)
+
+    q = Queue()
+    bot_thread = threading.Thread(target=start_bot, args=(q, meet_url, email, user, passwd, width, height,
+                                                          min_duration, max_duration, frac_to_exit))
+    bot_thread.start()
+    display = q.get(block=True, timeout=10)
+    ffmpeg_p = subprocess.Popen(["ffmpeg", "-y", "-loglevel", "error", "-f", "x11grab", "-r", fps, "-video_size",
+                                 f"{width}x{height}", "-draw_mouse", "0", "-i", f":{display}",
+                                 "-f", "pulse", "-ac", "2", "-i", "default", f"/output/{filename}.webm"])
+    bot_thread.join()
+    ffmpeg_p.kill()
+
+
+if __name__ == "__main__":
+    main()
