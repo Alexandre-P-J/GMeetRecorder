@@ -16,9 +16,9 @@ After the installation you may execute the software. Although the program
 can be run from terminal using `docker-compose up`, a common usecase is to set up `cron` or system equivalent
 to automate temporized executions.
 #### Arguments:
- - `BACKEND` Defaults to `gmail`.
+ - `BACKEND` Defaults to `gmail`, options are `upc` and `gmail`.
  - `EMAIL` **Required**.
- - `ORG_USER` **Required if `BACKEND` is not gmail**.
+ - `ORG_USER` **Required if `BACKEND` is not `gmail`**.
  - `PASSWORD` **Required**.
  - `MEET_URL` **Required**.
  - `VIDEO_NAME` Defaults to `video`.
