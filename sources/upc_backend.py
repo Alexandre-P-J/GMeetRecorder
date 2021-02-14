@@ -11,7 +11,9 @@ class UPCBackend(Backend):
 
     def __try_glogin(self, driver):
         try:
-            driver.find_element_by_id("identifierId").send_keys(self.mail)
+            userbox = driver.find_element_by_id("identifierId")
+            userbox.clear()
+            userbox.send_keys(self.mail)
             driver.find_element_by_id("identifierNext").click()
             return True
         except:
@@ -19,8 +21,12 @@ class UPCBackend(Backend):
 
     def __try_upc_login(self, driver):
         try:
-            driver.find_element_by_id("edit-name").send_keys(self.user)
-            driver.find_element_by_id("edit-pass").send_keys(self.passwd)
+            userbox = driver.find_element_by_id("edit-name")
+            userbox.clear()
+            userbox.send_keys(self.user)
+            passbox = driver.find_element_by_id("edit-pass")
+            passbox.clear()
+            passbox.send_keys(self.passwd)
             driver.find_element_by_id("submit_ok").click()
             return True
         except:
@@ -30,7 +36,7 @@ class UPCBackend(Backend):
         self.driver.get(meet_url)
         glogin_wait = WebDriverWait(self.driver, 20)
         glogin_wait.until(self.__try_glogin)
-        upc_wait = WebDriverWait(self.driver, 20)
+        upc_wait = WebDriverWait(self.driver, 60)
         upc_wait.until(self.__try_upc_login)
         call_wait = WebDriverWait(self.driver, 20)
         call_wait.until(self._Backend__try_join_call)

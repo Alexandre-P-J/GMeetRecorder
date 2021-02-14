@@ -1,8 +1,8 @@
 # Google Meet Recorder
 <img src="./logo.svg" alt="Google Meet Recorder logo" height="200"/><p>Attend and record google meet calls automatically.</p>
 ## Backends
- - UPC (polytechnic university of catalonia): Right now the only supported account type.
- - Google Mail: WIP.
+ - UPC (polytechnic university of catalonia)
+ - Gmail
  - Other Organizations that use the Google suite: By request.
 ## Instructions
 This software only requires [docker-compose](https://docs.docker.com/compose/install "Install docker-compose") and it should run on any platform supported by docker.
@@ -16,8 +16,9 @@ After the installation you may execute the software. Although the program
 can be run from terminal using `docker-compose up`, a common usecase is to set up `cron` or system equivalent
 to automate temporized executions.
 #### Arguments:
+ - `BACKEND` Defaults to gmail.
  - `EMAIL` **Required**.
- - `USER` **Required**.
+ - `ORG_USER` **Required if `BACKEND` is not gmail**.
  - `PASSWORD` **Required**.
  - `MEET_URL` **Required**.
  - `VIDEO_NAME` Defaults to `video`.
@@ -29,9 +30,7 @@ to automate temporized executions.
  - `RESOLUTION` Recording resolution, Defaults to `1920x1080`.
 
 #### Example:
-Record a call with a duration between 60 and 120 seconds (the bot may exit if 83% of the people already left) into `~/CoolFolder/vid_1_23_45.webm`.
+Record a call using UPC credentials with a duration between 60 and 120 seconds (the bot may exit if 83% of the people already left) into `~/CoolFolder/vid_1_23_45.webm`.
 
 Inside the project directory run:
-`EMAIL=john.smith@estudiantat.upc.edu USER=john.smith PASSWORD=h4k3rm4n1234 MEET_URL=https://meet.google.com/eas-tere-ggy MIN_DURATION=60 MAX_DURATION=120 OUTPUT_DIR=~/CoolFolder VIDEO_NAME=vid_1_23_45 FRAC_TO_EXIT=0.83 docker-compose up`
-
-Notice that personal data is passed using environment variables, you may want to take this into account if you plan on running the software on untrusted devices.
+`BACKEND=upc EMAIL=john.smith@estudiantat.upc.edu ORG_USER=john.smith PASSWORD='h4k3rm4n1234' MEET_URL=https://meet.google.com/eas-tere-ggy MIN_DURATION=60 MAX_DURATION=120 OUTPUT_DIR=~/CoolFolder VIDEO_NAME=vid_1_23_45 FRAC_TO_EXIT=0.83 docker-compose up`
