@@ -1,7 +1,7 @@
-# Google Meet Bot
-Attend and record google meet sessions automatically.
+# Google Meet Recorder
+Attend and record google meet calls automatically.
 ## Backends
- - UPC: Right now the only supported account type.
+ - UPC (polytechnic university of catalonia): Right now the only supported account type.
  - Google Mail: WIP.
  - Other Organizations that use the Google suite: By request.
 ## Instructions
@@ -29,7 +29,7 @@ to automate temporized executions.
  - `RESOLUTION` Recording resolution, Defaults to `1920x1080`.
 
 #### Example:
-Record a class with a duration between 60 and 120 seconds (the bot may exit if 83% of the people already left) into `~/CoolFolder/vid_1_23_45.webm`.
+Record a call with a duration between 60 and 120 seconds (the bot may exit if 83% of the people already left) into `~/CoolFolder/vid_1_23_45.webm`.
 
 Inside the project directory run:
 `EMAIL=john.smith@estudiantat.upc.edu USER=john.smith PASSWORD=h4k3rm4n1234 MEET_URL=https://meet.google.com/eas-tere-ggy MIN_DURATION=60 MAX_DURATION=120 OUTPUT_DIR=~/CoolFolder VIDEO_NAME=vid_1_23_45 FRAC_TO_EXIT=0.83 docker-compose up`
