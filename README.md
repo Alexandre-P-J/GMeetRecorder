@@ -1,11 +1,11 @@
 # Google Meet Recorder
-Attend and record google meet calls automatically.
+<img src="./logo.svg" alt="Google Meet Recorder logo" height="200"/><p>Attend and record google meet calls automatically.</p>
 ## Backends
  - UPC (polytechnic university of catalonia): Right now the only supported account type.
  - Google Mail: WIP.
  - Other Organizations that use the Google suite: By request.
 ## Instructions
-This software only requires `docker-compose` and its dependencies.
+This software only requires [docker-compose](https://docs.docker.com/compose/install "Install docker-compose") and it should run on any platform supported by docker.
 ### Installation:
  - Download or clone this repository.
  - `cd THIS_PROJECT_FOLDER`
