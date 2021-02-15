@@ -9,16 +9,6 @@ class UPCBackend(Backend):
         super(UPCBackend, self).__init__(upc_mail, upc_pass, ask_if_needed, resolution, position)
         self.user = upc_user
 
-    def __try_glogin(self, driver):
-        try:
-            userbox = driver.find_element_by_id("identifierId")
-            userbox.clear()
-            userbox.send_keys(self.mail)
-            driver.find_element_by_id("identifierNext").click()
-            return True
-        except:
-            return False
-
     def __try_upc_login(self, driver):
         try:
             userbox = driver.find_element_by_id("edit-name")
@@ -35,7 +25,7 @@ class UPCBackend(Backend):
     def join(self, meet_url):
         self.driver.get(meet_url)
         glogin_wait = WebDriverWait(self.driver, 20)
-        glogin_wait.until(self.__try_glogin)
+        glogin_wait.until(self._Backend__try_insert_mail)
         upc_wait = WebDriverWait(self.driver, 60)
         upc_wait.until(self.__try_upc_login)
         call_wait = WebDriverWait(self.driver, 20)

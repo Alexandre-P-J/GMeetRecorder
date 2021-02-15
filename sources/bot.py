@@ -8,20 +8,21 @@ import os
 import sys
 
 
-def backend_factory(backend, email, user, passwd, w, h):
+def backend_factory(backend, email, user, passwd, w, h, ask_to_join):
     b = ["gmail", "upc"]
     if backend == b[0]:
-        return GmailBackend(email, passwd, resolution=(w, h))
+        return GmailBackend(email, passwd, resolution=(w, h), ask_if_needed=ask_to_join)
     elif backend == b[1]:
-        return UPCBackend(email, user, passwd, resolution=(w, h))
+        return UPCBackend(email, user, passwd, resolution=(w, h), ask_if_needed=ask_to_join)
     print(f"Invalid Backend. Choose one of: {b}")
     sys.exit(1)
 
 
-def start_bot(q, backend, meet_url, email, user, passwd, w, h, min_time, max_time, frac_to_exit):
+def start_bot(q, backend, meet_url, email, user, passwd, w, h, min_time, max_time,
+              frac_to_exit, ask_to_join):
     with Xvfb(width=w, height=h, colordepth=24) as xvfb:
         q.put(xvfb.new_display)
-        m = backend_factory(backend, email, user, passwd, w, h)
+        m = backend_factory(backend, email, user, passwd, w, h, ask_to_join)
         m.meet_while(meet_url, min_time, max_time, frac_to_exit)
 
 
@@ -40,6 +41,7 @@ def main():
     filename = os.getenv("VIDEO_NAME")
     max_duration = int(os.getenv("MAX_DURATION"))
     min_duration = int(os.getenv("MIN_DURATION"))
+    ask_to_join = bool(os.getenv("ASK_JOIN").capitalize())
     frac_to_exit = float(os.getenv("FRAC_TO_EXIT"))
     fps = os.getenv("FPS")
     width, height = os.getenv("RESOLUTION").split("x")
@@ -47,7 +49,7 @@ def main():
 
     q = Queue()
     bot_thread = threading.Thread(target=start_bot, args=(q, backend, meet_url, email, user, passwd, width, height,
-                                                          min_duration, max_duration, frac_to_exit))
+                                                          min_duration, max_duration, frac_to_exit, ask_to_join))
     bot_thread.start()
     display = q.get(block=True, timeout=10)
     ffmpeg_p = subprocess.Popen(["ffmpeg", "-y", "-loglevel", "error", "-f", "x11grab", "-r", fps, "-video_size",

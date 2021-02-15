@@ -8,16 +8,6 @@ class GmailBackend(Backend):
                  resolution=(1920, 1080), position=(0, 0)):
         super(GmailBackend, self).__init__(mail, passwd, ask_if_needed, resolution, position)
 
-    def __try_insert_mail(self, driver):
-        try:
-            userbox = driver.find_element_by_id("identifierId")
-            userbox.clear()
-            userbox.send_keys(self.mail)
-            driver.find_element_by_id("identifierNext").click()
-            return True
-        except:
-            return False
-
     def __try_insert_passwd(self, driver):
         try:
             passbox = driver.find_element_by_xpath('//*[@id ="password"]/div[1]/div / div[1]/input') 
@@ -31,7 +21,7 @@ class GmailBackend(Backend):
     def join(self, meet_url):
         self.driver.get(meet_url)
         mail_wait = WebDriverWait(self.driver, 20)
-        mail_wait.until(self.__try_insert_mail)
+        mail_wait.until(self._Backend__try_insert_mail)
         pass_wait = WebDriverWait(self.driver, 60)
         pass_wait.until(self.__try_insert_passwd)
         call_wait = WebDriverWait(self.driver, 20)

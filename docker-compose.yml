@@ -11,6 +11,7 @@ services:
       - VIDEO_NAME=${VIDEO_NAME:-video}
       - MAX_DURATION=${MAX_DURATION:-7200}
       - MIN_DURATION=${MIN_DURATION:-1800}
+      - ASK_JOIN=${ASK_JOIN:-True}
       - FRAC_TO_EXIT=${FRAC_TO_EXIT:-0.90}
       - FPS=${FPS:-25}
       - RESOLUTION=${RESOLUTION:-1920x1080}

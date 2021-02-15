@@ -53,6 +53,22 @@ class Backend(ABC):
         time.sleep(1)
         return driver
 
+    def __try_insert_mail(self, driver):
+        try:
+            signbutton = driver.find_element_by_class_name("NPEfkd.RveJvd.snByac")
+            signbutton.click()
+            time.sleep(1) # not required
+        except:
+            pass
+        try:
+            userbox = driver.find_element_by_id("identifierId")
+            userbox.clear()
+            userbox.send_keys(self.mail)
+            driver.find_element_by_id("identifierNext").click()
+            return True
+        except:
+            return False
+
     def __try_join_call(self, driver):
         btexts = [
             f"contains(text(), '{i}')" for i in self.allowed_join_buttons]
@@ -90,9 +106,14 @@ class Backend(ABC):
         soft_end = current_time + min_seconds
         hard_end = current_time + max_seconds
         max_ppl = 0
+        fail_strike = 0
         while (hard_end - current_time) > 0 and not ((soft_end - current_time) <= 0 and current_ppl <= (max_ppl * (1 - fraction_ppl_left))):
             time.sleep(5)
             max_ppl = max(max_ppl, current_ppl)
             current_ppl = self.get_num_people(fallback=-1)
+            fail_strike = fail_strike+1 if current_ppl == -1 else 0
+            if fail_strike >= 5:
+                print("Exited due to call end or unknown issue.")
+                break
             current_time = time.time()
         self.exit()
