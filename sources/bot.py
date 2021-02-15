@@ -51,8 +51,9 @@ def main():
                                                           min_duration, max_duration, frac_to_exit, ask_to_join))
     bot_thread.start()
     display = q.get(block=True, timeout=10)
-    ffmpeg_p = subprocess.Popen(["ffmpeg", "-y", "-async", "1", "-use_wallclock_as_timestamps", "1", "-f", "x11grab", "-vsync","vfr", "-video_size",
-                                 f"{width}x{height}", "-draw_mouse", "0", "-i", f":{display}",
+    ffmpeg_p = subprocess.Popen(["ffmpeg", "-y", "-loglevel", "error", "-async", "1",
+                                 "-use_wallclock_as_timestamps", "1", "-f", "x11grab", "-vsync", "vfr",
+                                 "-video_size", f"{width}x{height}", "-draw_mouse", "0", "-i", f":{display}",
                                  "-f", "pulse", "-ac", "2", "-i", "default", f"/output/{filename}.webm"])
     bot_thread.join()
     ffmpeg_p.kill()
