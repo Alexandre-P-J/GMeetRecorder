@@ -1,5 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
 from abc import ABC, abstractmethod
 import time
 
@@ -88,31 +89,37 @@ class Backend(ABC):
         try:
             self.driver.find_element_by_class_name(
                 "DPvwYc.JnDFsc.grFr5.FbBiwc").click()
+            time.sleep(5)
         except:
             pass
-        self.driver.close()
+        self.driver.quit()
 
-    def get_num_people(self, fallback=-1):
-        try:
-            return int(self.driver.find_element_by_class_name("wnPUne.N0PJ8e").text)
-        except:
-            return fallback
+    def get_num_people(self, timeout=30):
+        def idle(driver):
+            try:
+                driver.find_element_by_class_name("wnPUne.N0PJ8e")
+                return True
+            except:
+                return False
+        pplwait = WebDriverWait(self.driver, timeout)
+        pplwait.until(idle)
+        ppl = self.driver.find_element_by_class_name("wnPUne.N0PJ8e").text
+        return int(ppl)
 
     def meet_while(self, meet_url, min_seconds, max_seconds, fraction_ppl_left):
         self.driver = self.__init_driver()
         self.join(meet_url)
         current_time = time.time()
-        current_ppl = self.get_num_people(fallback=-1)
+        current_ppl = self.get_num_people(timeout=60)
         soft_end = current_time + min_seconds
         hard_end = current_time + max_seconds
         max_ppl = 0
-        fail_strike = 0
         while (hard_end - current_time) > 0 and not ((soft_end - current_time) <= 0 and current_ppl <= (max_ppl * (1 - fraction_ppl_left))):
             time.sleep(5)
             max_ppl = max(max_ppl, current_ppl)
-            current_ppl = self.get_num_people(fallback=-1)
-            fail_strike = fail_strike+1 if current_ppl == -1 else 0
-            if fail_strike >= 5:
+            try:
+                current_ppl = self.get_num_people(timeout=30)
+            except:
                 print("Exited due to call end or unknown issue.")
                 break
             current_time = time.time()
