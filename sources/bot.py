@@ -45,6 +45,7 @@ def main():
     frac_to_exit = float(os.getenv("FRAC_TO_EXIT"))
     width, height = os.getenv("RESOLUTION").split("x")
     width, height = int(width), int(height)
+    fast_mode = bool(os.getenv("FAST").capitalize())
 
     q = Queue()
     bot_thread = threading.Thread(target=start_bot, args=(q, backend, meet_url, email, user, passwd, width, height,
@@ -52,14 +53,14 @@ def main():
     bot_thread.start()
     display = q.get(block=True, timeout=10)
     args_default = ["ffmpeg", "-y", "-loglevel", "error", "-async", "1", "-use_wallclock_as_timestamps", "1", "-f",
-                    "x11grab", "-vsync", "vfr", "-video_size", f"{width}x{height}", "-draw_mouse", "0", "-i", 
+                    "x11grab", "-vsync", "vfr", "-video_size", f"{width}x{height}", "-draw_mouse", "0", "-i",
                     f":{display}", "-f", "pulse", "-ac", "2", "-i", "default", f"/output/{filename}.webm"]
-    args_lightweight = ["ffmpeg", "-y", "-loglevel", "error", "-f", "alsa", "-ac", "2", "-i", "pulse", "-f", "x11grab", 
-                  "-r", "10", "-s", f"{width}x{height}", "-draw_mouse", "0", "-i", f":{display}", "-vcodec", 
-                  "libx264", "-pix_fmt", "yuv420p", "-preset", "ultrafast", "-crf", "30", "-threads", "0", "-acodec",
-                   "pcm_s16le", f"/output/{filename}.mkv"]
-    USE_LIGHTWEIGHT = True
-    if USE_LIGHTWEIGHT:
+    args_lightweight = ["ffmpeg", "-y", "-loglevel", "error", "-f", "alsa", "-ac", "2", "-i", "pulse", "-f", "x11grab",
+                        "-r", "10", "-s", f"{width}x{height}", "-draw_mouse", "0", "-i", f":{display}", "-vcodec",
+                        "libx264", "-pix_fmt", "yuv420p", "-preset", "ultrafast", "-crf", "30", "-threads", "0", "-acodec",
+                        "pcm_s16le", f"/output/{filename}.mkv"]
+
+    if fast_mode:
         args_default = args_lightweight
     ffmpeg_p = subprocess.Popen(args_default)
     bot_thread.join()

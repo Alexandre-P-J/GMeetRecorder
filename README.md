@@ -29,6 +29,7 @@ to automate temporized executions.
  - `ASK_JOIN` Whether asking to join a class is allowed for the bot. Defaults to True.
  - `FRAC_TO_EXIT` The required fraction of people that already left the meet call to leave the call. `MIN_DURATION` must have been already exceeded. Defaults to `0.90` (90%).
  - `RESOLUTION` Recording resolution, Defaults to `1920x1080`.
+ - `FAST` Prefer performance over quality and video size, Defaults to False.
 
 #### Example:
 Record a call using UPC credentials with a duration between 60 and 120 seconds (the bot may exit if 83% of the people already left) into `~/CoolFolder/vid_1_23_45.webm`.

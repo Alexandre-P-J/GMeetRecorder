@@ -14,6 +14,7 @@ services:
       - ASK_JOIN=${ASK_JOIN:-True}
       - FRAC_TO_EXIT=${FRAC_TO_EXIT:-0.90}
       - RESOLUTION=${RESOLUTION:-1920x1080}
+      - FAST=${FAST:-False}
     volumes:
       - ${OUTPUT_DIR:-./}:/output
     command: sh ./sources/driver.sh
