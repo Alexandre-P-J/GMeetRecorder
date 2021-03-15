@@ -2,6 +2,7 @@
 <img src="./logo.svg" alt="Google Meet Recorder logo" height="200"/><p>Attend and record google meet calls automatically.</p>
 ## Backends
  - UPC (polytechnic university of catalonia)
+ - UCA (university of cadiz)
  - Gmail
  - Other Organizations that use the Google suite: By request.
 ## Instructions
