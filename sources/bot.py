@@ -1,6 +1,7 @@
 from xvfbwrapper import Xvfb
 from upc_backend import UPCBackend
 from gmail_backend import GmailBackend
+from uca_backend import UCABackend
 import threading
 import subprocess
 from queue import Queue
@@ -9,11 +10,13 @@ import sys
 
 
 def backend_factory(backend, email, user, passwd, w, h, ask_to_join):
-    b = ["gmail", "upc"]
+    b = ["gmail", "upc", "uca"]
     if backend == b[0]:
         return GmailBackend(email, passwd, resolution=(w, h), ask_if_needed=ask_to_join)
     elif backend == b[1]:
         return UPCBackend(email, user, passwd, resolution=(w, h), ask_if_needed=ask_to_join)
+    elif backend == b[2]:
+        return UCABackend(email, user, passwd, resolution=(w, h), ask_if_needed=ask_to_join)
     print(f"Invalid Backend. Choose one of: {b}")
     sys.exit(1)
 
