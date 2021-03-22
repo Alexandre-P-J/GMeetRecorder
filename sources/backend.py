@@ -56,9 +56,10 @@ class Backend(ABC):
 
     def __try_insert_mail(self, driver):
         try:
-            signbutton = driver.find_element_by_class_name("NPEfkd.RveJvd.snByac")
+            signbutton = driver.find_element_by_class_name(
+                "NPEfkd.RveJvd.snByac")
             signbutton.click()
-            time.sleep(1) # not required
+            time.sleep(1)  # not required
         except:
             pass
         try:
@@ -94,33 +95,48 @@ class Backend(ABC):
             pass
         self.driver.quit()
 
-    def get_num_people(self, timeout=30):
-        def idle(driver):
+    def get_num_people(self):
+        try:
+            ppl = self.driver.find_element_by_class_name("wnPUne.N0PJ8e").text
+            return int(ppl)
+        except:
+            return -1
+
+    def __invalid_driver(self):
+        try:
+            self.driver.title
+            return False
+        except:
+            return True
+
+    def __reconnect(self, meet_url, force, times=3):
+        for _ in range(times):
+            invalid = self.__invalid_driver()
+            if (not (force or invalid)):
+                return True
+            elif (not invalid):
+                self.driver.quit()
             try:
-                driver.find_element_by_class_name("wnPUne.N0PJ8e")
+                self.driver = self.__init_driver()
+                self.join(meet_url)
                 return True
             except:
-                return False
-        pplwait = WebDriverWait(self.driver, timeout)
-        pplwait.until(idle)
-        ppl = self.driver.find_element_by_class_name("wnPUne.N0PJ8e").text
-        return int(ppl)
+                force = True
+        return False
 
     def meet_while(self, meet_url, min_seconds, max_seconds, fraction_ppl_left):
-        self.driver = self.__init_driver()
-        self.join(meet_url)
+        if (not self.__reconnect(meet_url, True)):
+            return
         current_time = time.time()
-        current_ppl = self.get_num_people(timeout=60)
+        current_ppl = self.get_num_people()
         soft_end = current_time + min_seconds
         hard_end = current_time + max_seconds
         max_ppl = 0
         while (hard_end - current_time) > 0 and not ((soft_end - current_time) <= 0 and current_ppl <= (max_ppl * (1 - fraction_ppl_left))):
-            time.sleep(5)
-            max_ppl = max(max_ppl, current_ppl)
-            try:
-                current_ppl = self.get_num_people(timeout=30)
-            except:
-                print("Exited due to call end or unknown issue.")
+            if (not self.__reconnect(meet_url, False)):
                 break
+            max_ppl = max(max_ppl, current_ppl)
+            tmp = self.get_num_people()
+            current_ppl = tmp if tmp != -1 else current_ppl
             current_time = time.time()
         self.exit()
