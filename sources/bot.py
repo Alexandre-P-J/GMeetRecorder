@@ -7,6 +7,7 @@ import subprocess
 from queue import Queue
 import os
 import sys
+from distutils.util import strtobool
 
 
 def backend_factory(backend, email, user, passwd, w, h, ask_to_join):
@@ -44,11 +45,11 @@ def main():
     filename = os.getenv("VIDEO_NAME")
     max_duration = int(os.getenv("MAX_DURATION"))
     min_duration = int(os.getenv("MIN_DURATION"))
-    ask_to_join = bool(os.getenv("ASK_JOIN").capitalize())
+    ask_to_join = bool(strtobool(os.getenv("ASK_JOIN").capitalize()))
     frac_to_exit = float(os.getenv("FRAC_TO_EXIT"))
     width, height = os.getenv("RESOLUTION").split("x")
     width, height = int(width), int(height)
-    fast_mode = bool(os.getenv("FAST").capitalize())
+    fast_mode = bool(strtobool(os.getenv("FAST").capitalize()))
 
     q = Queue()
     bot_thread = threading.Thread(target=start_bot, args=(q, backend, meet_url, email, user, passwd, width, height,
