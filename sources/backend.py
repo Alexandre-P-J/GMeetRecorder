@@ -139,4 +139,5 @@ class Backend(ABC):
             tmp = self.get_num_people()
             current_ppl = tmp if tmp != -1 else current_ppl
             current_time = time.time()
+            time.sleep(1)
         self.exit()
